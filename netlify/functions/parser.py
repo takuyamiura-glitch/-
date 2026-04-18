@@ -39,17 +39,12 @@ def _call_api(client: anthropic.Anthropic, page_text: str, retry: bool = False) 
         messages=[{"role": "user", "content": page_text}],
     )
     raw = message.content[0].text.strip()
-    raw = _strip_code_fences(raw)
+    raw = re.sub(r"^```(?:json)?\s*", "", raw, flags=re.MULTILINE)
+    raw = re.sub(r"\s*```$", "", raw, flags=re.MULTILINE)
     try:
-        data = json.loads(raw)
+        data = json.loads(raw.strip())
         if isinstance(data, list):
             return data
     except json.JSONDecodeError:
         pass
     return None
-
-
-def _strip_code_fences(text: str) -> str:
-    text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.MULTILINE)
-    text = re.sub(r"\s*```$", "", text, flags=re.MULTILINE)
-    return text.strip()

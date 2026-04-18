@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}メニューCSV変換ツール{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">メニューCSV変換ツール</h1>
+    <p class="text-gray-500 text-sm mb-6">
+      お店のHPメニューページのURLを入力するだけで、スマレジの商品登録用CSVを自動生成します。
+    </p>
+
+    <form id="mainForm" action="/generate" method="POST" onsubmit="showLoading()">
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="url">
+        メニューページのURL
+      </label>
+      <input
+        id="url"
+        name="url"
+        type="url"
+        required
+        placeholder="https://example.com/menu"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent mb-4"
+      >
+      <button
+        id="submitBtn"
+        type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg py-2.5 px-4 text-sm transition-colors"
+      >
+        CSVを生成する
+      </button>
+    </form>
+
+    <div id="loading" class="hidden mt-6 text-center">
+      <div class="inline-flex items-center gap-2 text-indigo-600 text-sm">
+        <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+        </svg>
+        <span>AIで解析中です。10〜30秒かかる場合があります...</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-700 space-y-1">
+    <p class="font-medium">使い方</p>
+    <ol class="list-decimal list-inside space-y-1 text-blue-600">
+      <li>お店のHPのメニューページURLを入力</li>
+      <li>「CSVを生成する」をクリック</li>
+      <li>抽出された商品を確認・編集</li>
+      <li>CSVをダウンロードしてスマレジにインポート</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+function showLoading() {
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '解析中...';
+  document.getElementById('loading').classList.remove('hidden');
+}
+</script>
+{% endblock %}

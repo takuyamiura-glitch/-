@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 // ---- Types ----
 type BookingDisplay = {
@@ -271,6 +272,7 @@ function AddBookingModal({
 
 // ---- Main component ----
 export default function MeetingRoomSearch() {
+  const { data: session } = useSession();
   const today = new Date().toISOString().slice(0, 10);
   const [date, setDate] = useState(today);
   const [minDuration, setMinDuration] = useState(30);
@@ -318,12 +320,33 @@ export default function MeetingRoomSearch() {
             <h1 className="text-xl font-bold text-gray-800">
               会議室空き時間検索
             </h1>
-            <button
-              onClick={() => setShowModal(true)}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              + 予約を追加
-            </button>
+            <div className="flex items-center gap-3">
+              {session?.user && (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  {session.user.image && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={session.user.image}
+                      alt=""
+                      className="w-7 h-7 rounded-full"
+                    />
+                  )}
+                  <span className="hidden sm:inline">{session.user.name ?? session.user.email}</span>
+                </div>
+              )}
+              <button
+                onClick={() => setShowModal(true)}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                + 予約を追加
+              </button>
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="px-3 py-2 text-sm text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                ログアウト
+              </button>
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">

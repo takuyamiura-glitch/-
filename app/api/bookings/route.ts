@@ -5,14 +5,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const rooms = getAllRooms();
+    const rooms = await getAllRooms();
     return NextResponse.json(rooms);
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "サーバーエラーが発生しました" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
   }
 }
 
@@ -22,10 +19,7 @@ export async function POST(req: NextRequest) {
     const { room_id, title, date, startTime, endTime, organizer } = body;
 
     if (!room_id || !title || !date || !startTime || !endTime) {
-      return NextResponse.json(
-        { error: "必須項目が不足しています" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "必須項目が不足しています" }, { status: 400 });
     }
     if (startTime >= endTime) {
       return NextResponse.json(
@@ -34,7 +28,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const booking = addBooking({
+    const booking = await addBooking({
       room_id: Number(room_id),
       title,
       start_time: `${date} ${startTime}`,
@@ -45,9 +39,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(booking, { status: 201 });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "サーバーエラーが発生しました" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
   }
 }
